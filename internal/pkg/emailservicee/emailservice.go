@@ -4,6 +4,7 @@ import (
 	"jonghong/internal/pkg/errno"
 	"jonghong/internal/pkg/log"
 	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 	"gopkg.in/gomail.v2"
@@ -25,6 +26,12 @@ type mailService struct {
 	running    bool              // 服务状态信息
 	runningMux sync.Mutex        // 服务状态转变的互斥锁
 
+	// 验证码相关
+}
+
+type codeInfo struct {
+	code      string
+	expiredAt time.Time
 }
 
 // 定义邮件消息对象
@@ -190,6 +197,8 @@ func (ms *mailService) Stop() error {
 	// 等待任务完成
 
 	ms.wg.Wait()
+
+	// 清理验证码，删除定时器
 
 	// 关停消息队列
 	close(ms.taskQueue)

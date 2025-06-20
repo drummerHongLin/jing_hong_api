@@ -6,5 +6,11 @@
 <body>
     <h1>{{ .welcome }}</h1>
     <p>This is a Gin HTML template example.</p>
+    <script>
+        var t = '{{ .token }}'
+        setTimeout(()=>{7
+            window.location.href = "https://www.honghouse.cn/emailVerified/" + t
+        },3000)
+    </script>
 </body>
 </html>
