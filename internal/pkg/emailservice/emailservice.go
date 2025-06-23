@@ -43,6 +43,8 @@ type MailService interface {
 	Start() error
 	Stop() error
 	SendEmailAsync(msg *MailMessage) error
+	GenerateCode(key string) (string, error)
+	VerifyCode(key string, value string) (bool, error)
 }
 
 // 创建全局单例对象
@@ -215,4 +217,14 @@ func (ms *mailService) Stop() error {
 
 	return nil
 
+}
+
+// 6. 生成验证码
+func (ms *mailService) GenerateCode(key string) (string, error) {
+	return ms.codeService.generateCode(key)
+}
+
+// 7. 验证验证码
+func (ms *mailService) VerifyCode(key string, value string) (bool, error) {
+	return ms.codeService.verifyCode(key, value)
 }

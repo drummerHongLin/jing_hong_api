@@ -1,6 +1,7 @@
 package jinghong
 
 import (
+	"context"
 	"jonghong/internal/jinghong/store"
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/known"
@@ -23,11 +24,21 @@ const (
 )
 
 func initDirPath() {
-	home, err := os.Getwd()
-	if err != nil {
-		panic(err)
+	const isDebug = true
+	var home string
+	var err error
+	if !isDebug {
+		home, err = os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+
+	} else {
+		home = "E:/AppDev/jing_hong_api/"
 	}
-	known.SetHomeDir(filepath.Join(filepath.Dir(home), ".."))
+
+	log.C(context.Background()).Infow(home)
+	known.SetHomeDir(home)
 }
 
 func initConfig() {

@@ -3,12 +3,12 @@ package email
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"html/template"
 	"jonghong/internal/jinghong/store"
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
 	"jonghong/internal/pkg/known"
+	v1 "jonghong/pkg/api/jinghong/v1"
 	"jonghong/pkg/token"
 	"path/filepath"
 	"time"
@@ -18,7 +18,7 @@ import (
 
 type EmailBiz interface {
 	SendVerificationEmail(ctx context.Context, username string) error
-	VerifyEmail(ctx context.Context, username string) error
+	VerifyEmail(ctx context.Context, username string, code string) (*v1.EmailVerifiedResponse, error)
 }
 
 type emailBiz struct {
@@ -42,12 +42,11 @@ func (eb *emailBiz) SendVerificationEmail(ctx context.Context, username string) 
 		return errno.ErrUserNotFound
 	}
 
-	tokenString, err := token.Sign(username, time.Now().Add(1*time.Hour).Unix())
+	// 生成验证码
+	code, err := eb.ms.GenerateCode(username)
 	if err != nil {
 		return err
 	}
-
-	//
 
 	temlPath := filepath.Join(known.HomeDir, "/static/html/EmailVerification.html")
 
@@ -59,7 +58,7 @@ func (eb *emailBiz) SendVerificationEmail(ctx context.Context, username string) 
 
 	if err := t.Execute(&buf, map[string]any{
 		"username":    username,
-		"code":        fmt.Sprintf("https://api.honghouse.cn/email/verification?token=%s", tokenString),
+		"code":        code,
 		"currentDate": time.Now().Format("2006-01-02"),
 	}); err != nil {
 		return err
@@ -79,16 +78,34 @@ func (eb *emailBiz) SendVerificationEmail(ctx context.Context, username string) 
 	return nil
 }
 
-func (eb *emailBiz) VerifyEmail(ctx context.Context, username string) error {
+func (eb *emailBiz) VerifyEmail(ctx context.Context, username string, code string) (*v1.EmailVerifiedResponse, error) {
 
 	userM, err := eb.us.Get(ctx, username)
+
 	if err != nil {
-		return errno.ErrUserNotFound
-	}
-	userM.IsVerified = true
-	if err := eb.us.Update(ctx, userM); err != nil {
-		return errno.InternalServerError.SetMessage("数据更新失败，请重试")
+		return nil, errno.ErrUserNotFound
 	}
 
-	return nil
+	rst, err := eb.ms.VerifyCode(username, code)
+
+	if err != nil {
+		return nil, err
+	}
+	if !rst {
+		return nil, errno.ErrCodeNotExist
+	}
+
+	userM.IsVerified = true
+	if err := eb.us.Update(ctx, userM); err != nil {
+		return nil, errno.InternalServerError.SetMessage("数据更新失败，请重试")
+	}
+
+	// 签发token
+	t, err := token.Sign(username, time.Now().Add(7*24*time.Hour).Unix())
+
+	if err != nil {
+		return nil, errno.ErrSignToken
+	}
+
+	return &v1.EmailVerifiedResponse{Token: t}, nil
 }

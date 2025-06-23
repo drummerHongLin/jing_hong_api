@@ -24,10 +24,10 @@ type CreateUserRequest struct {
 // 4. 更改密码格式，更改密码操作需要验证token，所以不需要传入用户名
 type ChangePasswordRequest struct {
 	// 旧密码.
-	OldPassword string `json:"oldPassword" valid:"required,max=18,min=6"`
+	OldPassword string `json:"oldPassword" validate:"required,max=18,min=6"`
 
 	// 新密码.
-	NewPassword string `json:"newPassword" valid:"required,max=18,min=6"`
+	NewPassword string `json:"newPassword" validate:"required,max=18,min=6"`
 }
 
 // 5. 设置头像

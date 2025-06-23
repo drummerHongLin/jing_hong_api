@@ -20,7 +20,7 @@ type codeInfo struct {
 	expiredTime time.Time
 }
 
-func (ec *EmailCode) generateCode() (string, error) {
+func (ec *EmailCode) generateCode(key string) (string, error) {
 	const digits = "0123456789"
 	code := make([]byte, 6)
 	for i := range code {
@@ -28,8 +28,11 @@ func (ec *EmailCode) generateCode() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		code[i] = byte(num.Int64())
+		code[i] = digits[num.Int64()]
 	}
+	// 失效时间为5分钟
+	expiredAt := time.Now().Add(5 * time.Minute)
+	ec.codes[key] = codeInfo{code: string(code), expiredTime: expiredAt}
 	return string(code), nil
 }
 

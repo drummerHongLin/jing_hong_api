@@ -6,8 +6,7 @@ import (
 	"jonghong/internal/pkg/core"
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
-	"jonghong/pkg/token"
-	"net/http"
+	v1 "jonghong/pkg/api/jinghong/v1"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +29,13 @@ func (ec *EmailController) SendVerificationEmail(c *gin.Context) {
 		core.WriteResponse(c, errno.ErrUserNotFound, nil)
 		return
 	}
+	_, err := ec.b.UserBiz().Get(c, username)
+
+	if err != nil {
+		core.WriteResponse(c, errno.ErrUserNotFound, nil)
+		return
+	}
+
 	if err := ec.b.EmailBiz(ec.ms).SendVerificationEmail(c, username); err != nil {
 		core.WriteResponse(c, err, nil)
 		return
@@ -39,27 +45,25 @@ func (ec *EmailController) SendVerificationEmail(c *gin.Context) {
 }
 
 func (ec *EmailController) VerifyEmail(c *gin.Context) {
-	tokenString := c.Query("token")
-	if tokenString == "" {
-		core.WriteResponse(c, errno.ErrTokenInvalid, nil)
+	username := c.Param("name")
+
+	var r v1.EmailVerifingRequest
+
+	if err := c.ShouldBindBodyWithJSON(&r); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
 		return
 	}
 
-	username, err := token.Parse(tokenString)
-
+	rs, err := ec.b.EmailBiz(ec.ms).VerifyEmail(c, username, r.Code)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 		return
 	}
-
-	if err := ec.b.EmailBiz(ec.ms).VerifyEmail(c, username); err != nil {
-		core.WriteResponse(c, err, nil)
-		return
-	}
-
-	c.HTML(http.StatusOK, "SuccessVerified.html", gin.H{
-		"title":   username,
-		"welcome": "您已认证成功，欢迎使用JingHong！",
-	})
+	// 如果验证成功返回token
+	core.WriteResponse(c, nil, rs)
+	//c.HTML(http.StatusOK, "SuccessVerified.html", gin.H{
+	//	"title":   username,
+	//	"welcome": "您已认证成功，欢迎使用JingHong！",
+	//})
 
 }

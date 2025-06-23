@@ -8,9 +8,7 @@ import (
 	"jonghong/internal/pkg/core"
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
-	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/middleware"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,11 +23,6 @@ func initRouter(g *gin.Engine) error {
 	g.NoRoute(func(ctx *gin.Context) {
 		core.WriteResponse(ctx, errno.InternalServerError, nil)
 	})
-
-	template := filepath.Join(known.HomeDir, "/static/html/*")
-
-	// 静态html的地址
-	g.LoadHTMLGlob(template)
 
 	// 初始化controller
 	uc := user.NewUserController(store.S)
@@ -57,9 +50,11 @@ func initRouter(g *gin.Engine) error {
 		{
 			userv1.POST("register", uc.Register)
 			userv1.PUT(":name/change-password", uc.ChangePassword)
+			userv1.GET(":name/send-email", ec.SendVerificationEmail)
+			userv1.POST(":name/verify-email", ec.VerifyEmail)
 			userv1.Use(middleware.Authn())
 			userv1.GET(":name", uc.Get)
-			userv1.GET(":name/verify-email", ec.SendVerificationEmail)
+
 		}
 		aliv1 := v1.Group("ali")
 		{
