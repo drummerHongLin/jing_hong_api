@@ -2,7 +2,7 @@ package jinghong
 
 import (
 	"jonghong/internal/jinghong/store"
-	emailservice "jonghong/internal/pkg/emailservicee"
+	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/log"
 	"jonghong/internal/pkg/model"

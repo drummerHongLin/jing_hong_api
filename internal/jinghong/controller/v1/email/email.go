@@ -4,7 +4,7 @@ import (
 	"jonghong/internal/jinghong/biz"
 	"jonghong/internal/jinghong/store"
 	"jonghong/internal/pkg/core"
-	emailservice "jonghong/internal/pkg/emailservicee"
+	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
 	"jonghong/pkg/token"
 	"net/http"

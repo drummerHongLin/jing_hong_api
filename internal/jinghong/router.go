@@ -6,7 +6,7 @@ import (
 	"jonghong/internal/jinghong/controller/v1/user"
 	"jonghong/internal/jinghong/store"
 	"jonghong/internal/pkg/core"
-	emailservice "jonghong/internal/pkg/emailservicee"
+	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
 	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/middleware"

@@ -21,4 +21,7 @@ var (
 
 	ErrUserNotFound      = &Errno{HTTP: 400, Code: "InternalError.UserNotFound", Message: "User not found."}
 	ErrPasswordIncorrect = &Errno{HTTP: 400, Code: "InternalError.PasswordIncorrect", Message: "Password Incorrect."}
+
+	ErrCodeNotExist = &Errno{HTTP: 401, Code: "AuthFailure.CodeNotExist", Message: "Code not exist."}
+	ErrCodeExpired  = &Errno{HTTP: 401, Code: "AuthFailure.CodeInvalid", Message: "Code was expired."}
 )

@@ -27,11 +27,7 @@ type mailService struct {
 	runningMux sync.Mutex        // 服务状态转变的互斥锁
 
 	// 验证码相关
-}
-
-type codeInfo struct {
-	code      string
-	expiredAt time.Time
+	codeService *EmailCode
 }
 
 // 定义邮件消息对象
@@ -58,11 +54,16 @@ var (
 func InitMailService() error {
 	once.Do(
 		func() {
+
 			MS = &mailService{
 				smtpHost:     viper.GetString("smtp.host"),
 				smtpPort:     viper.GetInt("smtp.port"),
 				smtpUsername: viper.GetString("smtp.username"),
 				smtpPassword: viper.GetString("smtp.password"),
+				codeService: &EmailCode{
+					codes:   make(map[string]codeInfo),
+					running: false,
+				},
 			}
 		})
 	MS.Start()
@@ -174,6 +175,12 @@ func (ms *mailService) Start() error {
 	// 启动任务调度
 	go ms.schedule()
 
+	// 启动验证码定时服务
+
+	ms.codeService.cleanupTicker = *time.NewTicker(5 * time.Minute)
+	ms.codeService.running = true
+	go ms.codeService.cleanExpiredCodes()
+
 	return nil
 
 }
@@ -199,6 +206,7 @@ func (ms *mailService) Stop() error {
 	ms.wg.Wait()
 
 	// 清理验证码，删除定时器
+	ms.codeService.running = false
 
 	// 关停消息队列
 	close(ms.taskQueue)

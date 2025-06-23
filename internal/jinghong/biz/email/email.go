@@ -3,17 +3,14 @@ package email
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
 	"fmt"
 	"html/template"
 	"jonghong/internal/jinghong/store"
-	emailservice "jonghong/internal/pkg/emailservicee"
+	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
 	"jonghong/internal/pkg/known"
 	"jonghong/pkg/token"
-	"math/big"
 	"path/filepath"
-	"sync"
 	"time"
 )
 
@@ -25,22 +22,11 @@ type EmailBiz interface {
 }
 
 type emailBiz struct {
-	ms            emailservice.MailService
-	us            store.UserStore
-	codes         map[string]codeInfo
-	cleanupTicker *time.Ticker
-	mutex         sync.Mutex
-}
-
-type codeInfo struct {
-	code        string
-	expiredTime time.Time
+	ms emailservice.MailService
+	us store.UserStore
 }
 
 func NewEmailBiz(ms emailservice.MailService, us store.UserStore) EmailBiz {
-	eb := &emailBiz{ms: ms, us: us}
-	eb.codes = make(map[string]codeInfo)
-	eb.cleanupTicker = time.NewTicker(5 * time.Minute)
 	return &emailBiz{ms: ms, us: us}
 }
 
@@ -105,26 +91,4 @@ func (eb *emailBiz) VerifyEmail(ctx context.Context, username string) error {
 	}
 
 	return nil
-}
-
-func (eb *emailBiz) generateCode() (string, error) {
-	const digits = "0123456789"
-	code := make([]byte, 6)
-	for i := range code {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(digits))))
-		if err != nil {
-			return "", err
-		}
-		code[i] = digits[num.Int64()]
-	}
-	return string(code), nil
-}
-
-func (eb *emailBiz) cleanupExpiredCodes() {
-	for range eb.cleanupTicker.C {
-		eb.mutex.Lock()
-		defer eb.mutex.Unlock()
-		now := time.Now()
-
-	}
 }

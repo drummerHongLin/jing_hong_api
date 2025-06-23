@@ -5,7 +5,7 @@ import (
 	"jonghong/internal/jinghong/biz/email"
 	"jonghong/internal/jinghong/biz/user"
 	"jonghong/internal/jinghong/store"
-	emailservice "jonghong/internal/pkg/emailservicee"
+	emailservice "jonghong/internal/pkg/emailservice"
 )
 
 // biz层的统一入口
