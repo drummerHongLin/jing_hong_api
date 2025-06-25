@@ -32,8 +32,6 @@ func initRouter(g *gin.Engine) error {
 	// 回调函数也不需要
 	g.POST("/login", uc.Login)
 
-	g.GET("/ali/callback/:purpose", ac.OssOperationCallback)
-
 	// 目前主要有两块业务功能：1. 登录；2. 会话留存
 	// 1. 登录功能包含：
 	// 	1）登录 验证账号和密码，返回token
@@ -49,18 +47,13 @@ func initRouter(g *gin.Engine) error {
 		userv1 := v1.Group("users")
 		{
 			userv1.POST("register", uc.Register)
-			userv1.PUT(":name/change-password", uc.ChangePassword)
 			userv1.GET(":name/send-email", ec.SendVerificationEmail)
 			userv1.POST(":name/verify-email", ec.VerifyEmail)
 			userv1.Use(middleware.Authn())
-			userv1.GET(":name", uc.Get)
-
-		}
-		aliv1 := v1.Group("ali")
-		{
-			aliv1.GET(":purpose/callback", ac.OssOperationCallback)
-			aliv1.Use(middleware.Authn())
-			aliv1.GET(":purpose/get-policy-token", ac.GetPolicyToken)
+			userv1.PUT(":name/change-password", uc.ChangePassword)
+			userv1.GET("current-user", uc.Get)
+			userv1.POST(":name/set-avatar", ac.SetAvatar)
+			userv1.GET(":name/get-avatar", ac.GetAvatar)
 		}
 	}
 

@@ -101,11 +101,12 @@ func (eb *emailBiz) VerifyEmail(ctx context.Context, username string, code strin
 	}
 
 	// 签发token
-	t, err := token.Sign(username, time.Now().Add(7*24*time.Hour).Unix())
+	expiredAt := time.Now().Add(7 * 24 * time.Hour).Unix()
+	t, err := token.Sign(username, expiredAt)
 
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.EmailVerifiedResponse{Token: t}, nil
+	return &v1.EmailVerifiedResponse{Token: t, ExpiredAt: expiredAt}, nil
 }

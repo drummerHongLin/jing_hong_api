@@ -2,7 +2,8 @@ package v1
 
 // 2. 登录返回数据格式 token
 type EmailVerifiedResponse struct {
-	Token string `json:"token"`
+	Token     string `json:"token"`
+	ExpiredAt int64  `json:"expiredAt"`
 }
 
 type EmailVerifingRequest struct {

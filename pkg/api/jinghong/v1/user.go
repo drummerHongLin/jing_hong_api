@@ -10,7 +10,8 @@ type LoginRequest struct {
 
 // 2. 登录返回数据格式 token
 type LoginResponse struct {
-	Token string `json:"token"`
+	Token     string `json:"token"`
+	ExpiredAt int64  `json:"expiredAt"`
 }
 
 // 3. 创建用户格式，头像和认证信息不是前端传入，后续在服务端修改
@@ -23,8 +24,6 @@ type CreateUserRequest struct {
 
 // 4. 更改密码格式，更改密码操作需要验证token，所以不需要传入用户名
 type ChangePasswordRequest struct {
-	// 旧密码.
-	OldPassword string `json:"oldPassword" validate:"required,max=18,min=6"`
 
 	// 新密码.
 	NewPassword string `json:"newPassword" validate:"required,max=18,min=6"`
@@ -35,3 +34,5 @@ type ChangePasswordRequest struct {
 // 1）前端先向本服务端请求oss的签名信息
 // 2）前端整合签名信息后将文件传入阿里云的oss
 // 3）本服务端监听oss的回调
+
+// 6. 忘记密码

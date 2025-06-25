@@ -27,7 +27,8 @@ ali:
   oss-access-key-id: LTAI5t8hkZFREwfqF5ooFper
   oss-access-key-secret: is1xPL02yqeuu9gTL9xSylGXMp1AJV
   oss-sts-role-arn: acs:ram::1346572407646271:role/jinghong
-
+  oss-region: cn-shanghai
+  oss-bucket: ai-tang
 # 邮箱服务配置
 smtp:
   host: smtp.yeah.net

@@ -5,6 +5,7 @@ import (
 	"jonghong/internal/jinghong/store"
 	"jonghong/internal/pkg/core"
 	"jonghong/internal/pkg/errno"
+	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/log"
 	v1 "jonghong/pkg/api/jinghong/v1"
 
@@ -31,6 +32,13 @@ func (uc *UserController) Login(c *gin.Context) {
 
 	if err := c.ShouldBindBodyWithJSON(&r); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
+		return
+	}
+
+	validator := validator.New(validator.WithRequiredStructEnabled())
+
+	if err := validator.Struct(r); err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 		return
 	}
 
@@ -62,19 +70,21 @@ func (uc *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	u, err := uc.b.UserBiz().Register(c, &r)
+	err := uc.b.UserBiz().Register(c, &r)
 
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 		return
 	}
-	core.WriteResponse(c, nil, u)
+	core.WriteResponse(c, nil, nil)
 
 }
 
 func (uc *UserController) Get(c *gin.Context) {
 	log.C(c).Infow("Find user by username called")
-	user, err := uc.b.UserBiz().Get(c, c.Param("name"))
+
+	// 从中间件设定中获取账号信息
+	user, err := uc.b.UserBiz().Get(c, c.GetString(known.XUsernameKey))
 
 	if err != nil {
 		core.WriteResponse(c, err, nil)
@@ -100,7 +110,8 @@ func (uc *UserController) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	if err := uc.b.UserBiz().ChangePassword(c, c.Param("name"), &r); err != nil {
+	// 从中间件设定中获取账号信息
+	if err := uc.b.UserBiz().ChangePassword(c, c.GetString(known.XUsernameKey), &r); err != nil {
 		core.WriteResponse(c, err, nil)
 		return
 	}

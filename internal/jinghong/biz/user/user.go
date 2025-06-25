@@ -18,7 +18,7 @@ import (
 // 实现从接口到数据库的对应
 
 type UserBiz interface {
-	Register(ctx context.Context, r *v1.CreateUserRequest) (*model.UserM, error)
+	Register(ctx context.Context, r *v1.CreateUserRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error
 	SetAvatar(ctx context.Context, username string, avatarUrl string) error
@@ -37,7 +37,7 @@ func NewUserBiz(us store.UserStore) *userBiz {
 
 // 实现接口逻辑
 
-func (ub *userBiz) Register(ctx context.Context, r *v1.CreateUserRequest) (*model.UserM, error) {
+func (ub *userBiz) Register(ctx context.Context, r *v1.CreateUserRequest) error {
 	//创建一个UserM对象，使请求对象转化为UserM对象
 	var userM model.UserM
 	// 这个包实现根据相同字段进行转换
@@ -47,11 +47,11 @@ func (ub *userBiz) Register(ctx context.Context, r *v1.CreateUserRequest) (*mode
 	// 判断用户名是否已存在
 	if err != nil {
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key 'username'", err.Error()); match {
-			return nil, errno.ErrUserAlreadyExist
+			return errno.ErrUserAlreadyExist
 		}
-		return nil, err
+		return err
 	}
-	return &userM, nil
+	return nil
 
 }
 
@@ -66,13 +66,14 @@ func (ub *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResp
 		return nil, errno.ErrPasswordIncorrect
 	}
 	// 签发token
-	t, err := token.Sign(r.Username, time.Now().Add(7*24*time.Hour).Unix())
+	expiredAt := time.Now().Add(7 * 24 * time.Hour).Unix()
+	t, err := token.Sign(r.Username, expiredAt)
 
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.LoginResponse{Token: t}, nil
+	return &v1.LoginResponse{Token: t, ExpiredAt: expiredAt}, nil
 
 }
 
@@ -80,10 +81,6 @@ func (ub *userBiz) ChangePassword(ctx context.Context, username string, r *v1.Ch
 	userM, err := ub.us.Get(ctx, username)
 	if err != nil {
 		return err
-	}
-
-	if err := auth.Compare(userM.Password, r.OldPassword); err != nil {
-		return errno.ErrPasswordIncorrect
 	}
 
 	userM.Password, _ = auth.Encrypt(r.NewPassword)

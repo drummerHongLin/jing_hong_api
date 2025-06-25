@@ -19,9 +19,15 @@ var (
 	// ErrUnauthorized 表示请求没有被授权.
 	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}
 
-	ErrUserNotFound      = &Errno{HTTP: 400, Code: "InternalError.UserNotFound", Message: "User not found."}
-	ErrPasswordIncorrect = &Errno{HTTP: 400, Code: "InternalError.PasswordIncorrect", Message: "Password Incorrect."}
+	ErrUserNotFound      = &Errno{HTTP: 401, Code: "InternalError.UserNotFound", Message: "User not found."}
+	ErrPasswordIncorrect = &Errno{HTTP: 401, Code: "InternalError.PasswordIncorrect", Message: "Password Incorrect."}
 
 	ErrCodeNotExist = &Errno{HTTP: 401, Code: "AuthFailure.CodeNotExist", Message: "Code not exist."}
 	ErrCodeExpired  = &Errno{HTTP: 401, Code: "AuthFailure.CodeInvalid", Message: "Code was expired."}
+
+	// 文件相关错误
+	ErrNoFileUpdated     = &Errno{HTTP: 501, Code: "FileFailuer.NoFileUpdated", Message: "No file being updated"}
+	ErrFileTypeUnsupport = &Errno{HTTP: 501, Code: "FileFailuer.FileTypeUnsupport", Message: "File type unsupport"}
+
+	FileSysError = &Errno{HTTP: 501, Code: "FileFailuer.FileSysError", Message: "File system error"}
 )

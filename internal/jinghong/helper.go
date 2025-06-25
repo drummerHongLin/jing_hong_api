@@ -3,6 +3,7 @@ package jinghong
 import (
 	"context"
 	"jonghong/internal/jinghong/store"
+	aliclient "jonghong/internal/pkg/ali_client"
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/log"
@@ -94,5 +95,6 @@ func initStore() error {
 }
 
 func initService() error {
+	aliclient.NewOssClient()
 	return emailservice.InitMailService()
 }
