@@ -65,6 +65,12 @@ func (ub *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResp
 	if err := auth.Compare(userM.Password, r.Password); err != nil {
 		return nil, errno.ErrPasswordIncorrect
 	}
+
+	// 判断用户是否已验证
+	if !userM.IsVerified {
+		return nil, errno.ErrUserNotVerified
+	}
+
 	// 签发token
 	expiredAt := time.Now().Add(7 * 24 * time.Hour).Unix()
 	t, err := token.Sign(r.Username, expiredAt)

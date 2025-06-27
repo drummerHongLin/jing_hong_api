@@ -6,6 +6,7 @@ import (
 	"jonghong/internal/jinghong/store"
 	"jonghong/internal/pkg/core"
 	"jonghong/internal/pkg/errno"
+	"jonghong/internal/pkg/log"
 
 	"net/http"
 
@@ -23,6 +24,7 @@ func NewAliController(ds store.IStore) *AliController {
 // 目前只需要签名信息
 // 前端在获取签名信息后通过oss接口，和ali交互
 func (ac *AliController) SetAvatar(c *gin.Context) {
+	log.C(c).Infow("Set avatar function called")
 	// 获取请求中的文件信息
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
@@ -70,12 +72,15 @@ func (ac *AliController) SetAvatar(c *gin.Context) {
 }
 
 func (ac *AliController) GetAvatar(c *gin.Context) {
-
+	log.C(c).Infow("Get avatar function called")
 	username := c.Param("name")
 	userM, err := ac.b.UserBiz().Get(c, username)
 	if err != nil {
 		core.WriteResponse(c, errno.FileSysError.SetMessage("%s", err.Error()), nil)
 		return
+	}
+	if userM.AvatarUrl == "" {
+		userM.AvatarUrl = "未登录.png"
 	}
 
 	fileBody, fileType, err := ac.b.AliBiz().GetObject(userM.AvatarUrl, c)

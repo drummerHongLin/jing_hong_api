@@ -118,3 +118,22 @@ func (uc *UserController) ChangePassword(c *gin.Context) {
 	core.WriteResponse(c, nil, "修改密码成功!")
 
 }
+
+func (uc *UserController) Verify(c *gin.Context) {
+	log.C(c).Infow("Verify user function called")
+
+	username := c.Param("name")
+
+	userM, err := uc.b.UserBiz().Get(c, username)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+		return
+	}
+	if !userM.IsVerified {
+		core.WriteResponse(c, errno.ErrUserNotVerified, nil)
+		return
+	}
+
+	core.WriteResponse(c, nil, nil)
+
+}

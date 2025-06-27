@@ -21,13 +21,17 @@ func initRouter(g *gin.Engine) error {
 
 	// 没有对应功能
 	g.NoRoute(func(ctx *gin.Context) {
-		core.WriteResponse(ctx, errno.InternalServerError, nil)
+		core.WriteResponse(ctx, errno.ErrPageNotFound, nil)
 	})
 
 	// 初始化controller
 	uc := user.NewUserController(store.S)
 	ac := ali.NewAliController(store.S)
 	ec := email.NewEmailController(store.S, emailservice.MS)
+
+	// 安全策略
+	g.Use(middleware.Cors, middleware.NoCache)
+
 	// 登录不需要token验证，采用用户名和密码验证
 	// 回调函数也不需要
 	g.POST("/login", uc.Login)
@@ -47,6 +51,7 @@ func initRouter(g *gin.Engine) error {
 		userv1 := v1.Group("users")
 		{
 			userv1.POST("register", uc.Register)
+			userv1.GET(":name/verify", uc.Verify)
 			userv1.GET(":name/send-email", ec.SendVerificationEmail)
 			userv1.POST(":name/verify-email", ec.VerifyEmail)
 			userv1.Use(middleware.Authn())

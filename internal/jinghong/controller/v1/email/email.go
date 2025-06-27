@@ -6,6 +6,7 @@ import (
 	"jonghong/internal/pkg/core"
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/errno"
+	"jonghong/internal/pkg/log"
 	v1 "jonghong/pkg/api/jinghong/v1"
 
 	"github.com/gin-gonic/gin"
@@ -45,6 +46,9 @@ func (ec *EmailController) SendVerificationEmail(c *gin.Context) {
 }
 
 func (ec *EmailController) VerifyEmail(c *gin.Context) {
+
+	log.C(c).Infow("Verify Email function called")
+
 	username := c.Param("name")
 
 	var r v1.EmailVerifingRequest
