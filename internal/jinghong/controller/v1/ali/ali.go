@@ -29,6 +29,7 @@ func (ac *AliController) SetAvatar(c *gin.Context) {
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		core.WriteResponse(c, errno.ErrNoFileUpdated, nil)
+		return
 	}
 
 	username := c.Param("name")
