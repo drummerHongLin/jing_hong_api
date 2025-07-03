@@ -29,7 +29,7 @@ type users struct {
 func (u *users) Create(ctx context.Context, user *model.UserM) error {
 
 	// 先删除没有验证且创建时间在5分钟之前的用户信息
-	u.db.Where("isVerified = ?", false).Where("createdAt <", time.Now().Add(-5*time.Minute)).Delete(&user)
+	u.db.Where("isVerified = ?", false).Where("createdAt < ?", time.Now().Add(-5*time.Minute)).Delete(&user)
 	// 根据结构体自动关联数据库
 	return u.db.Create(&user).Error
 }

@@ -9,7 +9,6 @@ import (
 	"jonghong/internal/pkg/log"
 	"jonghong/internal/pkg/model"
 	"jonghong/pkg/db"
-	"os"
 	"path/filepath"
 
 	"github.com/spf13/viper"
@@ -25,18 +24,10 @@ const (
 )
 
 func initDirPath() {
-	const isDebug = true
-	var home string
-	var err error
-	if !isDebug {
-		home, err = os.Getwd()
-		if err != nil {
-			panic(err)
-		}
 
-	} else {
-		home = "E:/AppDev/jing_hong_api/"
-	}
+	var home string
+
+	home = "E:/AppDev/jing_hong_api"
 
 	log.C(context.Background()).Infow(home)
 	known.SetHomeDir(home)
@@ -86,7 +77,7 @@ func initStore() error {
 	}
 
 	// 检查数据库内是否存在目标表
-	ins.AutoMigrate(&model.UserM{})
+	ins.AutoMigrate(&model.UserM{}, &model.SessionM{}, &model.MessageM{})
 
 	_ = store.NewStore(ins)
 

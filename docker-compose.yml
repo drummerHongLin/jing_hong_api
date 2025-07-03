@@ -1,0 +1,11 @@
+version: "1"
+services:
+  jinghong-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jinghongapi
+    ports:
+      - 5001:8080
+    restart: always
+    container_name: "jinghongapi"

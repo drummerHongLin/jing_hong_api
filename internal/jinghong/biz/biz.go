@@ -2,6 +2,7 @@ package biz
 
 import (
 	"jonghong/internal/jinghong/biz/ali"
+	"jonghong/internal/jinghong/biz/chat"
 	"jonghong/internal/jinghong/biz/email"
 	"jonghong/internal/jinghong/biz/user"
 	"jonghong/internal/jinghong/store"
@@ -13,6 +14,7 @@ import (
 type IBiz interface {
 	UserBiz() user.UserBiz
 	AliBiz() ali.AliBiz
+	ChatBiz() chat.ChatBiz
 	EmailBiz(ms emailservice.MailService) email.EmailBiz
 }
 
@@ -22,6 +24,10 @@ type biz struct {
 
 func (b *biz) UserBiz() user.UserBiz {
 	return user.NewUserBiz(b.ds.Users())
+}
+
+func (b *biz) ChatBiz() chat.ChatBiz {
+	return chat.NewChatBiz(b.ds.Chat())
 }
 
 func (b *biz) AliBiz() ali.AliBiz {

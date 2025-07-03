@@ -33,4 +33,7 @@ var (
 	ErrFileTypeUnsupport = &Errno{HTTP: 501, Code: "FileFailuer.FileTypeUnsupport", Message: "不支持文件类型！"}
 
 	FileSysError = &Errno{HTTP: 501, Code: "FileFailuer.FileSysError", Message: "未知文件系统异常！"}
+
+	// 对话存储相关
+	ErrSessionAlreadyExist = &Errno{HTTP: 500, Code: "InternalError.SessionAlreadyExist", Message: "会话ID已存在！"}
 )

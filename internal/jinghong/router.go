@@ -2,6 +2,7 @@ package jinghong
 
 import (
 	"jonghong/internal/jinghong/controller/v1/ali"
+	"jonghong/internal/jinghong/controller/v1/chat"
 	"jonghong/internal/jinghong/controller/v1/email"
 	"jonghong/internal/jinghong/controller/v1/user"
 	"jonghong/internal/jinghong/store"
@@ -28,6 +29,7 @@ func initRouter(g *gin.Engine) error {
 	uc := user.NewUserController(store.S)
 	ac := ali.NewAliController(store.S)
 	ec := email.NewEmailController(store.S, emailservice.MS)
+	cc := chat.NewChatController(store.S)
 
 	// 安全策略
 	g.Use(middleware.Cors, middleware.NoCache)
@@ -59,6 +61,16 @@ func initRouter(g *gin.Engine) error {
 			userv1.GET("current-user", uc.Get)
 			userv1.POST(":name/set-avatar", ac.SetAvatar)
 			userv1.GET(":name/get-avatar", ac.GetAvatar)
+		}
+		chatv1 := v1.Group("chat")
+		{ // 这里面的全部要身份认证
+			chatv1.Use(middleware.Authn())
+			chatv1.POST("create-new-session", cc.CreateNewSession)
+			chatv1.POST("create-new-message", cc.CreateNewMessage)
+			chatv1.GET("get-messages/:sessionId", cc.GetMessagesBySession)
+			chatv1.GET("get-sessions/:chatModel", cc.GetSessionsByModel)
+			chatv1.PUT("delete-session/:sessionId", cc.DeleteSession)
+			chatv1.PUT("update-message", cc.UpdateMessage)
 		}
 	}
 
