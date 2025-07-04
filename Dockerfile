@@ -1,7 +1,7 @@
-FROM alpine:latest
+FROM ubuntu:24.04
 copy . /opt/jinghong
 
-RUN /bin/bash apt-get update && \
+RUN  apt-get update && \
     apt-get install -y ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*

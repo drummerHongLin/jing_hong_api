@@ -71,6 +71,8 @@ func initRouter(g *gin.Engine) error {
 			chatv1.GET("get-sessions/:chatModel", cc.GetSessionsByModel)
 			chatv1.PUT("delete-session/:sessionId", cc.DeleteSession)
 			chatv1.PUT("update-message", cc.UpdateMessage)
+			chatv1.GET("get-all-messages", cc.GetMessagesBySession)
+			chatv1.GET("get-all-sessions", cc.GetSessionsByModel)
 		}
 	}
 

@@ -1,20 +1,21 @@
 package v1
 
 type Message struct {
-	ID             uint   `json:"id"`
-	MID            uint   `json:"mid"`
+	ID             string `json:"id"`
+	MID            uint   `json:"mId"`
 	Content        string `json:"content"`
 	Role           string `json:"role"`
 	State          string `json:"state"`
 	ShowingContent string `json:"showingContent"`
 	SendTime       string `json:"sendTime"`
-	SessionId      uint   `json:"sessionId"`
+	SessionId      string `json:"sessionId"`
 }
 
 type Session struct {
-	ID        uint   `json:"id"`
-	Title     string `json:"title"`
-	ChatModel string `json:"chatModel"`
+	ID         string `json:"id"`
+	Title      string `json:"title"`
+	ChatModel  string `json:"model"`
+	CreateTime string `json:"createTime"`
 }
 
 type NewSessionRequest struct {

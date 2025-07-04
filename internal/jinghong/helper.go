@@ -7,7 +7,6 @@ import (
 	emailservice "jonghong/internal/pkg/emailservice"
 	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/log"
-	"jonghong/internal/pkg/model"
 	"jonghong/pkg/db"
 	"path/filepath"
 
@@ -77,7 +76,7 @@ func initStore() error {
 	}
 
 	// 检查数据库内是否存在目标表
-	ins.AutoMigrate(&model.UserM{}, &model.SessionM{}, &model.MessageM{})
+	//ins.AutoMigrate(&model.UserM{}, &model.SessionM{}, &model.MessageM{})
 
 	_ = store.NewStore(ins)
 
