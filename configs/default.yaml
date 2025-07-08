@@ -22,13 +22,13 @@ log:
   format: console # 指定日志显示格式，可选值：console, json
   output-paths: [/tmp/miniblog.log, stdout] # 指定日志输出位置，多个输出，用 `逗号 + 空格` 分开。stdout：标准输出，
 
-# ali安全服务配置
+# ali安全服务配置 自行调整仓库地址
 ali:
-  oss-access-key-id: LTAI5t8hkZFREwfqF5ooFper
-  oss-access-key-secret: is1xPL02yqeuu9gTL9xSylGXMp1AJV
-  oss-sts-role-arn: acs:ram::1346572407646271:role/jinghong
-  oss-region: cn-shanghai
-  oss-bucket: ai-tang
+  oss-access-key-id: 
+  oss-access-key-secret:
+  oss-sts-role-arn: 
+  oss-region:
+  oss-bucket: 
 # 邮箱服务配置
 smtp:
   host: smtp.yeah.net
