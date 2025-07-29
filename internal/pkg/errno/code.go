@@ -36,4 +36,8 @@ var (
 
 	// 对话存储相关
 	ErrSessionAlreadyExist = &Errno{HTTP: 500, Code: "InternalError.SessionAlreadyExist", Message: "会话ID已存在！"}
+
+	// 枚举值相关
+
+	ErrEnumOutOfRange = &Errno{HTTP: 500, Code: "EnumError.IndexOutOfRange", Message: "枚举值越界不存在"}
 )

@@ -11,7 +11,7 @@ import (
 // 用户的增删改查主要是对用户信息的调整
 // token信息直接用jwt进行签发和解码，不需要存数据库
 type UserM struct {
-	ID         int64  `gorm:"column:id;" json:"id"`
+	ID         int    `gorm:"column:id;" json:"id"`
 	Username   string `gorm:"column:username;not null;unique" json:"username"`
 	Password   string `gorm:"column:password;not null" json:"password"`
 	Nickname   string `gorm:"column:nickname" json:"nickname"`

@@ -10,16 +10,16 @@ import (
 
 type ChatStore interface {
 	CreateSession(ctx context.Context, session []*model.SessionM) error
-	GetSessions(ctx context.Context, chatModel string, userId uint) ([]model.SessionM, error)
-	GetSession(ctx context.Context, id string, userId uint) (model.SessionM, error)
+	GetSessions(ctx context.Context, chatModel string, userId int) ([]model.SessionM, error)
+	GetSession(ctx context.Context, id string, userId int) (model.SessionM, error)
 	DeleteSession(ctx context.Context, session *model.SessionM) error
 	CreateMessage(ctx context.Context, message []*model.MessageM) error
 	// 用外键查
 	GetMessages(ctx context.Context, session *model.SessionM) ([]model.MessageM, error)
 	UpdateSession(ctx context.Context, session *model.SessionM) error
 	UpdateMessage(ctx context.Context, message *model.MessageM) error
-	GetAllMessages(ctx context.Context, userId uint) ([]model.MessageM, error)
-	GetAllSessions(ctx context.Context, userId uint) ([]model.SessionM, error)
+	GetAllMessages(ctx context.Context, userId int) ([]model.MessageM, error)
+	GetAllSessions(ctx context.Context, userId int) ([]model.SessionM, error)
 }
 
 type chat struct {
@@ -39,19 +39,19 @@ func (c *chat) DeleteSession(ctx context.Context, session *model.SessionM) error
 	return c.db.Delete(&session).Error
 }
 
-func (c *chat) GetSessions(ctx context.Context, chatModel string, userId uint) ([]model.SessionM, error) {
+func (c *chat) GetSessions(ctx context.Context, chatModel string, userId int) ([]model.SessionM, error) {
 	var sessions []model.SessionM
 	err := c.db.Where("chatModel = ?", chatModel).Where("userId = ?", userId).Order("createTime desc").Find(&sessions).Error
 	return sessions, err
 }
 
-func (c *chat) GetAllSessions(ctx context.Context, userId uint) ([]model.SessionM, error) {
+func (c *chat) GetAllSessions(ctx context.Context, userId int) ([]model.SessionM, error) {
 	var sessions []model.SessionM
 	err := c.db.Where("userId = ?", userId).Order("createTime desc").Find(&sessions).Error
 	return sessions, err
 }
 
-func (c *chat) GetSession(ctx context.Context, id string, userId uint) (model.SessionM, error) {
+func (c *chat) GetSession(ctx context.Context, id string, userId int) (model.SessionM, error) {
 	var session model.SessionM
 	err := c.db.Where(&model.SessionM{ID: id, UserId: userId}).First(&session).Error
 	return session, err
@@ -68,7 +68,7 @@ func (c *chat) GetMessages(ctx context.Context, session *model.SessionM) ([]mode
 	return messages, err
 }
 
-func (c *chat) GetAllMessages(ctx context.Context, userId uint) ([]model.MessageM, error) {
+func (c *chat) GetAllMessages(ctx context.Context, userId int) ([]model.MessageM, error) {
 	var sessions []model.SessionM
 	if err := c.db.Where("userId = ?", userId).Order("createTime").Find(&sessions).Error; err != nil {
 		return nil, err

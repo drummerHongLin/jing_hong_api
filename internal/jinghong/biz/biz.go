@@ -4,6 +4,7 @@ import (
 	"jonghong/internal/jinghong/biz/ali"
 	"jonghong/internal/jinghong/biz/chat"
 	"jonghong/internal/jinghong/biz/email"
+	"jonghong/internal/jinghong/biz/payment"
 	"jonghong/internal/jinghong/biz/user"
 	"jonghong/internal/jinghong/store"
 	emailservice "jonghong/internal/pkg/emailservice"
@@ -15,6 +16,7 @@ type IBiz interface {
 	UserBiz() user.UserBiz
 	AliBiz() ali.AliBiz
 	ChatBiz() chat.ChatBiz
+	PaymentBiz() payment.PaymentBiz
 	EmailBiz(ms emailservice.MailService) email.EmailBiz
 }
 
@@ -36,6 +38,10 @@ func (b *biz) AliBiz() ali.AliBiz {
 
 func (b *biz) EmailBiz(ms emailservice.MailService) email.EmailBiz {
 	return email.NewEmailBiz(ms, b.ds.Users())
+}
+
+func (b *biz) PaymentBiz() payment.PaymentBiz {
+	return payment.NewPaymentBiz(b.ds.Payment())
 }
 
 func NewBiz(ds store.IStore) IBiz {

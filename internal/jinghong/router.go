@@ -4,6 +4,7 @@ import (
 	"jonghong/internal/jinghong/controller/v1/ali"
 	"jonghong/internal/jinghong/controller/v1/chat"
 	"jonghong/internal/jinghong/controller/v1/email"
+	"jonghong/internal/jinghong/controller/v1/payment"
 	"jonghong/internal/jinghong/controller/v1/user"
 	"jonghong/internal/jinghong/store"
 	"jonghong/internal/pkg/core"
@@ -30,6 +31,7 @@ func initRouter(g *gin.Engine) error {
 	ac := ali.NewAliController(store.S)
 	ec := email.NewEmailController(store.S, emailservice.MS)
 	cc := chat.NewChatController(store.S)
+	pc := payment.NewPaymentController(store.S)
 
 	// 安全策略
 	g.Use(middleware.Cors, middleware.NoCache)
@@ -73,6 +75,14 @@ func initRouter(g *gin.Engine) error {
 			chatv1.PUT("update-message", cc.UpdateMessage)
 			chatv1.GET("get-all-messages", cc.GetMessagesBySession)
 			chatv1.GET("get-all-sessions", cc.GetSessionsByModel)
+		}
+		paymentv1 := v1.Group("payment")
+		{
+			paymentv1.Use(middleware.Authn())
+			paymentv1.POST("create-new-payment", pc.CreateNewPaymentRecord)
+			paymentv1.POST("update-payment", pc.UpdatePaymentRecord)
+			paymentv1.GET("get-payment/:paymentNo", pc.GetPaymentRecordByNo)
+			paymentv1.GET("get-payments", pc.GetPaymentRecordsById)
 		}
 	}
 

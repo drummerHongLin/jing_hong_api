@@ -37,7 +37,7 @@ func (cc *ChatController) CreateNewSession(c *gin.Context) {
 		return
 	}
 
-	if err := cc.b.ChatBiz().CreateNewSession(c, r, uint(user.ID)); err != nil {
+	if err := cc.b.ChatBiz().CreateNewSession(c, r, user.ID); err != nil {
 		core.WriteResponse(c, err, nil)
 		return
 	}
@@ -75,7 +75,7 @@ func (cc *ChatController) GetMessagesBySession(c *gin.Context) {
 		return
 	}
 
-	messages, err := cc.b.ChatBiz().GetMessagesBySession(c, sessionId, uint(user.ID))
+	messages, err := cc.b.ChatBiz().GetMessagesBySession(c, sessionId, user.ID)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 		return
@@ -94,7 +94,7 @@ func (cc *ChatController) GetSessionsByModel(c *gin.Context) {
 		return
 	}
 
-	sessions, err := cc.b.ChatBiz().GetSessionsByModel(c, chatModel, uint(user.ID))
+	sessions, err := cc.b.ChatBiz().GetSessionsByModel(c, chatModel, user.ID)
 
 	if err != nil {
 		core.WriteResponse(c, err, nil)
@@ -132,7 +132,7 @@ func (cc *ChatController) DeleteSession(c *gin.Context) {
 		return
 	}
 
-	if err := cc.b.ChatBiz().DeleteSession(c, sessionId, uint(user.ID)); err != nil {
+	if err := cc.b.ChatBiz().DeleteSession(c, sessionId, user.ID); err != nil {
 		core.WriteResponse(c, err, nil)
 		return
 	}
@@ -148,7 +148,7 @@ func (cc *ChatController) GetAllSessions(c *gin.Context) {
 		return
 	}
 
-	sessions, err := cc.b.ChatBiz().GetAllSessions(c, uint(user.ID))
+	sessions, err := cc.b.ChatBiz().GetAllSessions(c, user.ID)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 		return
@@ -165,7 +165,7 @@ func (cc *ChatController) GetAllMessages(c *gin.Context) {
 		return
 	}
 
-	messages, err := cc.b.ChatBiz().GetAllMessages(c, uint(user.ID))
+	messages, err := cc.b.ChatBiz().GetAllMessages(c, user.ID)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 		return

@@ -24,9 +24,9 @@ log:
 
 # ali安全服务配置
 ali:
-  oss-access-key-id: LTAI5t8hkZFREwfqF5ooFper
-  oss-access-key-secret: is1xPL02yqeuu9gTL9xSylGXMp1AJV
-  oss-sts-role-arn: acs:ram::1346572407646271:role/jinghong
+  oss-access-key-id: '替换成自己的id'
+  oss-access-key-secret: '替换成自己的scret'
+  oss-sts-role-arn: '替换成自己的arn'
   oss-region: cn-shanghai
   oss-bucket: ai-tang
 # 邮箱服务配置

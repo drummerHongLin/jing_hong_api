@@ -29,7 +29,7 @@ type SessionM struct {
 	Title      string `gorm:"column:title;not null;" json:"title"`
 	ChatModel  string `gorm:"column:chatModel;not null;" json:"chatModel"`
 	CreateTime string `gorm:"column:CreateTime;not null" json:"sendTime"`
-	UserId     uint   `gorm:"column:userId; not null" json:"userId"`
+	UserId     int    `gorm:"column:userId; not null" json:"userId"`
 	User       UserM  `gorm:"foreignKey:UserId;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
 	// CreatedAt UpdatedAt 是保留关键字

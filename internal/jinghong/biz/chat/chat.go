@@ -12,14 +12,14 @@ import (
 )
 
 type ChatBiz interface {
-	CreateNewSession(ctx context.Context, r []v1.NewSessionRequest, userId uint) error
+	CreateNewSession(ctx context.Context, r []v1.NewSessionRequest, userId int) error
 	CreateNewMessage(ctx context.Context, r []v1.NewMessageRequest) error
-	GetMessagesBySession(ctx context.Context, sessionId string, userId uint) (*v1.GetMessagesResponse, error)
-	GetSessionsByModel(ctx context.Context, chatModel string, userId uint) (*v1.GetSessionsResponse, error)
+	GetMessagesBySession(ctx context.Context, sessionId string, userId int) (*v1.GetMessagesResponse, error)
+	GetSessionsByModel(ctx context.Context, chatModel string, userId int) (*v1.GetSessionsResponse, error)
 	UpdateMessage(ctx context.Context, r *v1.NewMessageRequest) error
-	DeleteSession(ctx context.Context, sessionId string, userId uint) error
-	GetAllSessions(ctx context.Context, userId uint) (*v1.GetSessionsResponse, error)
-	GetAllMessages(ctx context.Context, userId uint) (*v1.GetMessagesResponse, error)
+	DeleteSession(ctx context.Context, sessionId string, userId int) error
+	GetAllSessions(ctx context.Context, userId int) (*v1.GetSessionsResponse, error)
+	GetAllMessages(ctx context.Context, userId int) (*v1.GetMessagesResponse, error)
 }
 
 type chatBiz struct {
@@ -32,7 +32,7 @@ func NewChatBiz(cs store.ChatStore) ChatBiz {
 	}
 }
 
-func (cb *chatBiz) CreateNewSession(ctx context.Context, r []v1.NewSessionRequest, userId uint) error {
+func (cb *chatBiz) CreateNewSession(ctx context.Context, r []v1.NewSessionRequest, userId int) error {
 	var sessions []*model.SessionM
 	_ = copier.Copy(&sessions, r)
 	for _, v := range sessions {
@@ -61,7 +61,7 @@ func (cb *chatBiz) CreateNewMessage(ctx context.Context, r []v1.NewMessageReques
 	return nil
 }
 
-func (cb *chatBiz) GetMessagesBySession(ctx context.Context, sessionId string, userId uint) (*v1.GetMessagesResponse, error) {
+func (cb *chatBiz) GetMessagesBySession(ctx context.Context, sessionId string, userId int) (*v1.GetMessagesResponse, error) {
 
 	session, err := cb.cs.GetSession(ctx, sessionId, userId)
 
@@ -84,7 +84,7 @@ func (cb *chatBiz) GetMessagesBySession(ctx context.Context, sessionId string, u
 
 }
 
-func (cb *chatBiz) GetSessionsByModel(ctx context.Context, chatModel string, userId uint) (*v1.GetSessionsResponse, error) {
+func (cb *chatBiz) GetSessionsByModel(ctx context.Context, chatModel string, userId int) (*v1.GetSessionsResponse, error) {
 
 	session, err := cb.cs.GetSessions(ctx, chatModel, userId)
 
@@ -110,7 +110,7 @@ func (cb *chatBiz) UpdateMessage(ctx context.Context, r *v1.NewMessageRequest) e
 	return nil
 
 }
-func (cb *chatBiz) DeleteSession(ctx context.Context, sessionId string, userId uint) error {
+func (cb *chatBiz) DeleteSession(ctx context.Context, sessionId string, userId int) error {
 	session, err := cb.cs.GetSession(ctx, sessionId, userId)
 
 	if err != nil {
@@ -124,7 +124,7 @@ func (cb *chatBiz) DeleteSession(ctx context.Context, sessionId string, userId u
 
 }
 
-func (cb *chatBiz) GetAllSessions(ctx context.Context, userId uint) (*v1.GetSessionsResponse, error) {
+func (cb *chatBiz) GetAllSessions(ctx context.Context, userId int) (*v1.GetSessionsResponse, error) {
 	session, err := cb.cs.GetAllSessions(ctx, userId)
 
 	if err != nil {
@@ -138,7 +138,7 @@ func (cb *chatBiz) GetAllSessions(ctx context.Context, userId uint) (*v1.GetSess
 	return &v1.GetSessionsResponse{Sessions: returnSessions}, nil
 }
 
-func (cb *chatBiz) GetAllMessages(ctx context.Context, userId uint) (*v1.GetMessagesResponse, error) {
+func (cb *chatBiz) GetAllMessages(ctx context.Context, userId int) (*v1.GetMessagesResponse, error) {
 
 	messages, err := cb.cs.GetAllMessages(ctx, userId)
 
