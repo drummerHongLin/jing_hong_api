@@ -5,6 +5,7 @@ import (
 	"jonghong/internal/jinghong/controller/v1/chat"
 	"jonghong/internal/jinghong/controller/v1/email"
 	"jonghong/internal/jinghong/controller/v1/payment"
+	"jonghong/internal/jinghong/controller/v1/player"
 	"jonghong/internal/jinghong/controller/v1/user"
 	"jonghong/internal/jinghong/store"
 	"jonghong/internal/pkg/core"
@@ -32,6 +33,7 @@ func initRouter(g *gin.Engine) error {
 	ec := email.NewEmailController(store.S, emailservice.MS)
 	cc := chat.NewChatController(store.S)
 	pc := payment.NewPaymentController(store.S)
+	prc := player.NewPlayerController(store.S)
 
 	// 安全策略
 	g.Use(middleware.Cors, middleware.NoCache)
@@ -79,10 +81,20 @@ func initRouter(g *gin.Engine) error {
 		paymentv1 := v1.Group("payment")
 		{
 			paymentv1.Use(middleware.Authn())
-			paymentv1.POST("create-new-payment", pc.CreateNewPaymentRecord)
-			paymentv1.POST("update-payment", pc.UpdatePaymentRecord)
+			paymentv1.POST("", pc.CreateNewPaymentRecord)
+			paymentv1.PUT("", pc.UpdatePaymentRecord)
 			paymentv1.GET("get-payment/:paymentNo", pc.GetPaymentRecordByNo)
-			paymentv1.GET("get-payments", pc.GetPaymentRecordsById)
+			paymentv1.GET("get-payments/:offset/:limit", pc.GetPaymentRecordsById)
+			paymentv1.POST("insert-payments", pc.InsertPaymentRecord)
+		}
+		playerV1 := v1.Group("player")
+		{
+			playerV1.Use(middleware.Authn())
+			playerV1.POST("", prc.CreatePlayConfig)
+			playerV1.PUT("", prc.UpdatePlayConfig)
+			playerV1.DELETE(":playConfigNo", prc.DeletePlayConfig)
+			playerV1.GET("get-play-configs/:offset/:limit", prc.GetPlayConfigs)
+			playerV1.POST("insert-play-configs", prc.InsertPlayConfigs)
 		}
 	}
 

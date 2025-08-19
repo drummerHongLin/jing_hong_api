@@ -5,6 +5,7 @@ import (
 	"jonghong/internal/jinghong/biz/chat"
 	"jonghong/internal/jinghong/biz/email"
 	"jonghong/internal/jinghong/biz/payment"
+	"jonghong/internal/jinghong/biz/player"
 	"jonghong/internal/jinghong/biz/user"
 	"jonghong/internal/jinghong/store"
 	emailservice "jonghong/internal/pkg/emailservice"
@@ -18,6 +19,7 @@ type IBiz interface {
 	ChatBiz() chat.ChatBiz
 	PaymentBiz() payment.PaymentBiz
 	EmailBiz(ms emailservice.MailService) email.EmailBiz
+	PlayerBiz() player.PlayerBiz
 }
 
 type biz struct {
@@ -42,6 +44,10 @@ func (b *biz) EmailBiz(ms emailservice.MailService) email.EmailBiz {
 
 func (b *biz) PaymentBiz() payment.PaymentBiz {
 	return payment.NewPaymentBiz(b.ds.Payment())
+}
+
+func (b *biz) PlayerBiz() player.PlayerBiz {
+	return player.NewPlayerBiz(b.ds.Player())
 }
 
 func NewBiz(ds store.IStore) IBiz {

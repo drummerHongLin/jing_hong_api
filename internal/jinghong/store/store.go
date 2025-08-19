@@ -19,6 +19,7 @@ type IStore interface {
 	DB() *gorm.DB
 	Chat() ChatStore
 	Payment() PaymentStore
+	Player() PlayerStore
 }
 
 type databstore struct {
@@ -39,6 +40,10 @@ func (ds *databstore) Chat() ChatStore {
 
 func (ds *databstore) Payment() PaymentStore {
 	return newPayment(ds.db)
+}
+
+func (ds *databstore) Player() PlayerStore {
+	return newPlayer(ds.db)
 }
 
 func NewStore(db *gorm.DB) IStore {

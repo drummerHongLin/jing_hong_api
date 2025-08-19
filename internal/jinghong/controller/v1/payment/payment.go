@@ -8,6 +8,7 @@ import (
 	"jonghong/internal/pkg/known"
 	"jonghong/internal/pkg/log"
 	v1 "jonghong/pkg/api/jinghong/v1"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +26,7 @@ func (pc *PaymentController) CreateNewPaymentRecord(c *gin.Context) {
 	// 先通过token查找user
 	user, err := pc.b.UserBiz().Get(c, c.GetString(known.XUsernameKey))
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.WriteResponse(c, errno.ErrUserNotFound, nil)
 		return
 	}
 
@@ -45,11 +46,11 @@ func (pc *PaymentController) UpdatePaymentRecord(c *gin.Context) {
 	// 先通过token查找user
 	user, err := pc.b.UserBiz().Get(c, c.GetString(known.XUsernameKey))
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.WriteResponse(c, errno.ErrUserNotFound, nil)
 		return
 	}
 
-	var r v1.NewPaymentRecordRequest
+	var r v1.UpdatePaymentRecordRequest
 	if err := c.ShouldBindBodyWithJSON(&r); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
 		return
@@ -67,7 +68,7 @@ func (pc *PaymentController) GetPaymentRecordByNo(c *gin.Context) {
 	// 先通过token查找user
 	user, err := pc.b.UserBiz().Get(c, c.GetString(known.XUsernameKey))
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.WriteResponse(c, errno.ErrUserNotFound, nil)
 		return
 	}
 
@@ -83,7 +84,20 @@ func (pc *PaymentController) GetPaymentRecordByNo(c *gin.Context) {
 }
 
 func (pc *PaymentController) GetPaymentRecordsById(c *gin.Context) {
-	log.C(c).Infow("Get messages by Id function called")
+	log.C(c).Infow("Get PaymentRecord by Id function called")
+
+	// 解析参数变量
+	offset, err := strconv.Atoi(c.Param("offset"))
+	if err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("非法offset参数，参数必须为整数"), nil)
+		return
+	}
+	limit, err := strconv.Atoi(c.Param("limit"))
+
+	if err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("非法limit参数，参数必须为整数"), nil)
+		return
+	}
 
 	// 先通过token查找user
 	user, err := pc.b.UserBiz().Get(c, c.GetString(known.XUsernameKey))
@@ -92,7 +106,7 @@ func (pc *PaymentController) GetPaymentRecordsById(c *gin.Context) {
 		return
 	}
 
-	record, err := pc.b.PaymentBiz().GetPaymentRecordsById(c, user.ID)
+	record, err := pc.b.PaymentBiz().GetPaymentRecordsById(c, user.ID, offset, limit)
 
 	if err != nil {
 		core.WriteResponse(c, err, nil)
@@ -101,4 +115,21 @@ func (pc *PaymentController) GetPaymentRecordsById(c *gin.Context) {
 
 	core.WriteResponse(c, nil, record)
 
+}
+
+func (pc *PaymentController) InsertPaymentRecord(c *gin.Context) {
+	log.C(c).Infow("Imsert PaymentRecord  function called")
+	// 先通过token查找user
+	user, err := pc.b.UserBiz().Get(c, c.GetString(known.XUsernameKey))
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+		return
+	}
+	var r []v1.PaymentRecord
+	if err := c.ShouldBindBodyWithJSON(&r); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
+		return
+	}
+	err = pc.b.PaymentBiz().InsertPaymentRecord(c, r, user.ID)
+	core.WriteResponse(c, err, nil)
 }

@@ -11,7 +11,8 @@ type PaymentStore interface {
 	CreatePaymentRecord(ctx context.Context, paymentRecord *model.PaymentRecordM) error
 	UpdatePaymentRecord(ctx context.Context, paymentRecord *model.PaymentRecordM) error
 	GetPaymentRecord(ctx context.Context, paymentNo string, userId int) (*model.PaymentRecordM, error)
-	GetPaymentRecordsByUser(ctx context.Context, userId int) ([]model.PaymentRecordM, error)
+	GetPaymentRecordsByUser(ctx context.Context, userId int, offset int, limit int) ([]model.PaymentRecordM, error)
+	InsertPaymentRecord(ctx context.Context, paymentRecords []model.PaymentRecordM) error
 }
 
 type payment struct {
@@ -38,12 +39,16 @@ func (p *payment) GetPaymentRecord(ctx context.Context, paymentNo string, userId
 	return &paymentRecord, err
 }
 
-func (p *payment) GetPaymentRecordsByUser(ctx context.Context, userId int) ([]model.PaymentRecordM, error) {
+func (p *payment) GetPaymentRecordsByUser(ctx context.Context, userId int, offset int, limit int) ([]model.PaymentRecordM, error) {
 
 	var paymentRecords []model.PaymentRecordM
-	err := p.db.Where("userId = ?", userId).Order("createTime desc").Find(&paymentRecords).Error
+	err := p.db.Where("userId = ?", userId).Order("createTime desc").Offset(offset).Limit(limit).Find(&paymentRecords).Error
 
 	return paymentRecords, err
+}
+
+func (p *payment) InsertPaymentRecord(ctx context.Context, paymentRecords []model.PaymentRecordM) error {
+	return p.db.Create(&paymentRecords).Error
 }
 
 // 验证
