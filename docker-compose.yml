@@ -5,7 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile
     image: jinghongapi
+    networks: 
+      - ext_net
     ports:
       - 5001:8080
     restart: always
     container_name: "jinghongapi"
+
+networks:
+  ext_net:
+    external: true      # 告诉 Compose 不要新建，直接用已有的
+    name: my-network

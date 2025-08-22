@@ -5,9 +5,9 @@ jwt-secret:  Rtg8BPKNEf2mB4mgvKONGPZZQSaJWNLijxR42qRgq0iBb5
 
 # MySQL 数据库相关配置
 db:
-  host: 101.201.152.66  # MySQL 机器 IP 和端口，默认 127.0.0.1:3306
-  username: root # MySQL 用户名(建议授权最小权限集)
-  password: 4everM0522 # MySQL 用户密码
+  host: '换成自己的数据库'  # MySQL 机器 IP 和端口，默认 127.0.0.1:3306
+  username: '换成自己的用户名称' # MySQL 用户名(建议授权最小权限集)
+  password: '换成自己的密码' # MySQL 用户密码
   database: jinghong # miniblog 系统所用的数据库名
   max-idle-connections: 100 # MySQL 最大空闲连接数，默认 100
   max-open-connections: 100 # MySQL 最大打开的连接数，默认 100
